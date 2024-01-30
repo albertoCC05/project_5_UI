@@ -6,6 +6,8 @@ public class Target : MonoBehaviour
 {
     private float timeToDestroy = 3;
     private GameManager gameManager;
+    [SerializeField] private int pointsValue;
+    [SerializeField] private GameObject explosionParticles;
 
     private void Start()
     {
@@ -17,7 +19,18 @@ public class Target : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        Destroy(gameObject);
+        if (gameManager.isGameOver == false)
+        {
+            gameManager.UpdateScore(pointsValue);
+
+            Instantiate(explosionParticles, transform.position, Quaternion.identity);
+
+            Destroy(gameObject);
+
+           
+
+        }
+
     }
     private void OnDestroy()
     {
