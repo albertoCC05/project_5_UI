@@ -8,10 +8,12 @@ public class Target : MonoBehaviour
     private GameManager gameManager;
     [SerializeField] private int pointsValue;
     [SerializeField] private GameObject explosionParticles;
+    public int lives = 3;
+    private UIManager uiManager;
 
     private void Start()
     {
-
+        uiManager = FindObjectOfType<UIManager>();
         gameManager = FindObjectOfType<GameManager>();
         Destroy(gameObject, timeToDestroy);
 
@@ -26,6 +28,18 @@ public class Target : MonoBehaviour
             Instantiate(explosionParticles, transform.position, Quaternion.identity);
 
             Destroy(gameObject);
+
+            if (gameObject.CompareTag("Bad"))
+            {
+                gameManager.lives--;
+                uiManager.UpdateLivesText(gameManager.lives);
+                if (gameManager.lives <= 0)
+                {
+                    gameManager.isGameOver = true;
+                    uiManager.ShowGameOverPanel();
+                }
+
+            }
 
            
 

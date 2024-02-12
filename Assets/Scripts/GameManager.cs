@@ -18,7 +18,15 @@ public class GameManager : MonoBehaviour
     public List<Vector3> targetPositionInScene;
     private int score;
     private UIManager uiManager;
-    public float timer;
+    private int timer = 60;
+    [SerializeField] private GameObject pausePanel;
+    private Target targetScript;
+    public int lives = 3;
+    
+   
+
+
+
  
    
     
@@ -26,6 +34,19 @@ public class GameManager : MonoBehaviour
 
 
     //funciones
+
+    public void PauseGame()
+    {
+        pausePanel.SetActive(true);
+        Time.timeScale = 0;
+
+
+    }
+    public void ContinueGame()
+    {
+        Time.timeScale = 1;
+        pausePanel.SetActive(false);
+    }
 
     private Vector3 RandomSpawnPosition()
     {
@@ -59,6 +80,23 @@ public class GameManager : MonoBehaviour
         }
         
     }
+    private IEnumerator Timer()
+    {
+        while (!isGameOver)
+        {
+            yield return new WaitForSeconds(1);
+            timer--;
+            uiManager.UpdateTimeTex(timer);
+            if (timer <= 0)
+            {
+                isGameOver = true;
+                uiManager.ShowGameOverPanel();
+
+            }
+        }
+      
+
+    }
     
 
     public void UpdateScore(int newPoints)
@@ -75,26 +113,31 @@ public class GameManager : MonoBehaviour
     public void changeScene()
     {
         SceneManager.LoadScene("Game");
+        
     }
 
     public void StartGame(int dificulty)
     {
+        Time.timeScale = 1;
         spawnRate = spawnRate / dificulty; 
         StartCoroutine(SpawnRandomTarget());
         score = 0;
         uiManager.UpdateScoreText(score);
         uiManager.hideMainmMenuOanel();
-        
+        uiManager.UpdateLivesText(lives);
+        StartCoroutine (Timer());
     }
 
  
 
     private void Start() 
     {
-
         
+        pausePanel.SetActive(false);
         uiManager = FindObjectOfType<UIManager>();
         uiManager.HideGameOverPanel();
+        uiManager.HideOptionsPanel();
+        lives = 3;
        
         
     }
@@ -103,17 +146,7 @@ public class GameManager : MonoBehaviour
         targetPositionInScene = new List<Vector3>();
         
     }
-    private void Update()
-    {
-        if (isGameOver == false)
-        {
-            timer = Time.deltaTime;
-        }
-
-       
-
-
-        
-    }
+    
+    
 
 }
